@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">Tin Tức Thể Thao</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">NHD</string>
+    <string name="nav_header_subtitle">admin@nhd6.site</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    
+    <!-- Dark Mode Strings -->
+    <string name="dark_mode">Chế độ tối</string>
+    <string name="light_mode">Chế độ sáng</string>
+    <string name="system_default">Theo hệ thống</string>
+    <string name="theme_settings">Cài đặt giao diện</string>
+    <string name="choose_theme">Chọn giao diện</string>
+    <string name="theme_light">Sáng</string>
+    <string name="theme_dark">Tối</string>
+    <string name="theme_system">Hệ thống</string>
+
+    <!-- AI Assistant -->
+    <string name="open_ai_assistant">Chat Bot</string>
+    <string name="close_ai_assistant">Đóng Chat Bot</string>
+</resources>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- RecyclerView Styles -->
+    <style name="RecyclerView" />
+    
+    <style name="RecyclerView.Vertical">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:nestedScrollingEnabled">false</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:paddingBottom">@dimen/spacing_sm</item>
+    </style>
+    
+    <!-- Card Styles - Modern -->
+    <style name="Card.Article" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="android:layout_marginHorizontal">12dp</item>
+        <item name="android:layout_marginVertical">8dp</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+        <item name="rippleColor">?attr/colorPrimary</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+    
+    <style name="Card.Comment" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">1dp</item>
+        <item name="android:layout_margin">@dimen/card_margin</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+    
+    <style name="Card.Modern" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">2dp</item>
+        <item name="strokeWidth">0dp</item>
+    </style>
+    
+    <!-- Text Styles - Modern Typography -->
+    <style name="Text" />
+    
+    <style name="Text.SectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_md</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <style name="Text.ArticleTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:maxLines">2</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_sm</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <style name="Text.ArticleSummary">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="android:maxLines">3</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+        <item name="android:layout_marginBottom">@dimen/spacing_md</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="Text.Meta">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">?android:attr/textColorSecondary</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="Text.Headline">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.01</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <!-- Button Styles - Modern -->
+    <style name="Button.TextButton" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minWidth">0dp</item>
+        <item name="android:paddingHorizontal">@dimen/spacing_md</item>
+        <item name="android:paddingVertical">@dimen/spacing_sm</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+    
+    <style name="Button.Primary" parent="Widget.Material3.Button">
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.02</item>
+    </style>
+    
+    <style name="Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="strokeColor">?attr/colorPrimary</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="strokeWidth">2dp</item>
+    </style>
+    
+    <!-- Chip Styles - Modern -->
+    <style name="Chip.Modern" parent="Widget.Material3.Chip.Assist">
+        <item name="chipBackgroundColor">?attr/colorSurfaceVariant</item>
+        <item name="chipCornerRadius">16dp</item>
+        <item name="chipMinHeight">32dp</item>
+        <item name="android:textSize">13sp</item>
+        <item name="chipStrokeWidth">0dp</item>
+    </style>
+    
+    <style name="Chip.ChatBot" parent="Widget.Material3.Chip.Suggestion">
+        <item name="chipBackgroundColor">@color/chat_ai_bubble_light</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="chipStrokeColor">@color/chat_icon_light</item>
+        <item name="chipStrokeWidth">1dp</item>
+        <item name="chipCornerRadius">16dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+</resources>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark mode overrides -->
+    <color name="surface_variant_light">#2D2D2D</color>
+    <color name="text_primary_light">#FFFFFF</color>
+    <color name="text_secondary_light">#B3FFFFFF</color>
+    <color name="divider_light">#3D3D3D</color>
+    
+    <!-- Status Colors for Dark Mode (slightly muted) -->
+    <color name="red_500">#EF5350</color>
+    <color name="red_600">#E53935</color>
+    <color name="green_500">#66BB6A</color>
+    <color name="green_600">#43A047</color>
+    <color name="orange_500">#FFA726</color>
+    <color name="orange_600">#FB8C00</color>
+    <color name="blue_500">#42A5F5</color>
+    <color name="blue_600">#1E88E5</color>
+    
+    <!-- Chat Bot Colors for Dark Mode -->
+    <color name="chat_user_bubble_light">#42A5F5</color>
+    <color name="chat_ai_bubble_light">#2D2D2D</color>
+    <color name="chat_input_bg_light">#1E1E1E</color>
+    <color name="chat_surface_light">#1E1E1E</color>
+    <color name="chat_icon_light">#42A5F5</color>
+    <color name="chat_typing_dot_light">#616161</color>
+</resources>

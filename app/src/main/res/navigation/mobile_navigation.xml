@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/nav_home">
+
+    <fragment
+        android:id="@+id/nav_home"
+        android:name="com.nhd.news.ui.home.HomeFragment"
+        android:label="@string/menu_home"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_articles"
+            app:destination="@id/nav_articles" />
+        <action
+            android:id="@+id/action_home_to_article_detail"
+            app:destination="@id/nav_article_detail" />
+        <action
+            android:id="@+id/action_home_to_matches"
+            app:destination="@id/nav_matches" />
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/nav_articles"
+        android:name="com.nhd.news.ui.articles.ArticlesFragment"
+        android:label="Articles"
+        tools:layout="@layout/fragment_articles">
+        <argument
+            android:name="categoryId"
+            app:argType="integer" />
+        <argument
+            android:name="categoryName"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_articles_to_detail"
+            app:destination="@id/nav_article_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_matches"
+        android:name="com.nhd.news.ui.matches.MatchesFragment"
+        android:label="Trận đấu"
+        tools:layout="@layout/fragment_matches">
+        <action
+            android:id="@+id/action_matches_to_match_detail"
+            app:destination="@id/nav_match_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_article_detail"
+        android:name="com.nhd.news.ui.articledetail.ArticleDetailFragment"
+        android:label="Chi tiết bài viết"
+        tools:layout="@layout/fragment_article_detail">
+        <argument
+            android:name="articleId"
+            app:argType="integer" />
+        <argument
+            android:name="articleTitle"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_match_detail"
+        android:name="com.nhd.news.ui.matchdetail.MatchDetailFragment"
+        android:label="Chi tiết trận đấu"
+        tools:layout="@layout/fragment_match_detail">
+        <argument
+            android:name="matchId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_match_detail_to_team_detail"
+            app:destination="@id/nav_team_detail" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_team_detail"
+        android:name="com.nhd.news.ui.teamdetail.TeamDetailFragment"
+        android:label="Chi tiết đội bóng"
+        tools:layout="@layout/fragment_team_detail">
+        <argument
+            android:name="teamId"
+            app:argType="integer" />
+    </fragment>
+</navigation>

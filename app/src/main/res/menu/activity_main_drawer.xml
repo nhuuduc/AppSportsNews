@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_sports"
+            android:title="@string/menu_home" />
+        <item
+            android:id="@+id/nav_matches"
+            android:icon="@drawable/ic_sports"
+            android:title="Trận đấu" />
+    </group>
+    
+    <!-- Sports categories will be added dynamically from database -->
+    <group 
+        android:id="@+id/group_sports"
+        android:checkableBehavior="single">
+    </group>
+    
+    <!-- Tournament categories will be added dynamically from database -->
+    <group 
+        android:id="@+id/group_tournaments"
+        android:checkableBehavior="single">
+    </group>
+    
+    <group android:id="@+id/group_settings">
+        <item
+            android:id="@+id/nav_theme"
+            android:icon="@drawable/ic_brightness_6_24dp"
+            android:title="@string/theme_settings" />
+    </group>
+</menu>
