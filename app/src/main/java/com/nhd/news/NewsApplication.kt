@@ -15,7 +15,7 @@ class NewsApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         
-        // 清理过期缓存（超过7天）
+        // Xóa cache đã hết hạn (quá 7 ngày)
         // cacheManager.clearOldCache()
     }
 }

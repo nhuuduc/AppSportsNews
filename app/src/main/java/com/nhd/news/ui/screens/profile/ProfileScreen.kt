@@ -8,6 +8,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -227,7 +229,7 @@ fun ProfileScreen(
                     ),
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.error)
                 ) {
-                    Icon(Icons.Default.ExitToApp, "Đăng xuất")
+                    Icon(Icons.AutoMirrored.Filled.ExitToApp, "Đăng xuất")
                     Spacer(Modifier.width(8.dp))
                         Text("Đăng xuất")
                     }
@@ -326,7 +328,7 @@ fun ProfileMenuItem(
             }
             
             Icon(
-                imageVector = Icons.Default.ArrowForward,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = "Go",
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
             )

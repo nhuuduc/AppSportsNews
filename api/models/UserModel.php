@@ -237,26 +237,26 @@ class UserModel {
     }
     
     /**
-     * Login user
+     * Login user - Supports both email and username
      */
-    public function login($email, $password, $device_info = null, $ip_address = null) {
+    public function login($identifier, $password, $device_info = null, $ip_address = null) {
         try {
-            // Get user
+            // Get user by email or username
             $stmt = $this->conn->prepare(
                 "SELECT user_id, email, username, password_hash, full_name, avatar_url, 
                         role, email_verified_at, is_active 
-                 FROM users WHERE email = ?"
+                 FROM users WHERE email = ? OR username = ?"
             );
-            $stmt->execute([$email]);
+            $stmt->execute([$identifier, $identifier]);
             $user = $stmt->fetch();
             
             if (!$user) {
-                return ['success' => false, 'message' => 'Email hoặc mật khẩu không đúng'];
+                return ['success' => false, 'message' => 'Tên đăng nhập/Email hoặc mật khẩu không đúng'];
             }
             
             // Verify password
             if (!password_verify($password, $user['password_hash'])) {
-                return ['success' => false, 'message' => 'Email hoặc mật khẩu không đúng'];
+                return ['success' => false, 'message' => 'Tên đăng nhập/Email hoặc mật khẩu không đúng'];
             }
             
             // Check if account is active

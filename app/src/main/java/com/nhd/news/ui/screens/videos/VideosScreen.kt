@@ -10,6 +10,8 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -19,8 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.nhd.news.data.models.Video
 import com.nhd.news.ui.components.VideoCard
 import com.nhd.news.ui.theme.TinTứcThểThaoTheme
@@ -78,8 +78,7 @@ fun VideosScreen(
         // Content with SwipeRefresh
         SwipeRefresh(
             state = swipeRefreshState,
-            onRefresh = { viewModel.refresh() },
-            modifier = Modifier.fillMaxSize()
+            onRefresh = { viewModel.refresh() }
         ) {
             when {
                 uiState.isLoading && uiState.videos.isEmpty() -> {

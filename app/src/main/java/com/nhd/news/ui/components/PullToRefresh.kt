@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 /**
@@ -23,21 +22,10 @@ fun PullToRefreshLayout(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     content: @Composable () -> Unit
 ) {
-    val swipeRefreshState = rememberSwipeRefreshState(isRefreshing)
-    
     SwipeRefresh(
-        state = swipeRefreshState,
+        state = rememberSwipeRefreshState(isRefreshing),
         onRefresh = onRefresh,
-        modifier = modifier,
-        indicator = { state, refreshTrigger ->
-            SwipeRefreshIndicator(
-                state = state,
-                refreshTriggerDistance = refreshTrigger,
-                contentColor = indicatorColor,
-                backgroundColor = backgroundColor,
-                scale = true
-            )
-        }
+        modifier = modifier.fillMaxSize()
     ) {
         content()
     }

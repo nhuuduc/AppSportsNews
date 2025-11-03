@@ -36,20 +36,21 @@ class AuthController extends Controller {
     
     /**
      * POST /auth/login
+     * Supports login with email or username
      */
     public function login() {
         $data = $this->getRequestData();
         
-        $email = trim($data['email'] ?? '');
+        $identifier = trim($data['email'] ?? ''); // Can be email or username
         $password = $data['password'] ?? '';
         $device_info = $data['device_info'] ?? null;
         $ip_address = $_SERVER['REMOTE_ADDR'] ?? null;
         
-        if (empty($email) || empty($password)) {
-            $this->error('Email và mật khẩu là bắt buộc', 400);
+        if (empty($identifier) || empty($password)) {
+            $this->error('Tên đăng nhập/Email và mật khẩu là bắt buộc', 400);
         }
         
-        $result = $this->userModel->login($email, $password, $device_info, $ip_address);
+        $result = $this->userModel->login($identifier, $password, $device_info, $ip_address);
         
         if ($result['success']) {
             $this->success($result);

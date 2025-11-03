@@ -34,14 +34,14 @@ class ArticlesViewModel @Inject constructor(
     }
     
     /**
-     * 从API加载分类数据
+     * Tải danh sách category từ API
      */
     private fun loadCategories() {
         viewModelScope.launch {
             categoryRepository.getAllCategories().collect { result ->
                 result.onSuccess { categories ->
                     _categories.value = categories
-                    // 如果当前选中的分类不在新加载的分类列表中，重置为"全部"
+                    // Nếu category đang chọn không có trong danh sách mới, reset về "Tất cả"
                     if (_uiState.value.selectedCategoryId != null) {
                         val exists = categories.any { it.categoryId == _uiState.value.selectedCategoryId }
                         if (!exists) {
@@ -49,7 +49,7 @@ class ArticlesViewModel @Inject constructor(
                         }
                     }
                 }.onFailure {
-                    // 如果加载失败，保持空列表
+                    // Nếu tải thất bại, giữ danh sách rỗng
                     _categories.value = emptyList()
                 }
             }
@@ -57,8 +57,8 @@ class ArticlesViewModel @Inject constructor(
     }
 
     /**
-     * 选择分类
-     * @param categoryId 分类ID，null表示"全部"
+     * Chọn category
+     * @param categoryId ID của category, null nghĩa là "Tất cả"
      */
     fun selectCategory(categoryId: Int?) {
         _uiState.value = _uiState.value.copy(selectedCategoryId = categoryId)
@@ -69,11 +69,11 @@ class ArticlesViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(isLoading = true, error = null)
 
         viewModelScope.launch {
-            // 使用 categoryId 来过滤文章，如果为 null 则获取所有文章
+            // Dùng categoryId để lọc bài viết, nếu null thì lấy tất cả
             repository.getArticles(category = "sports", page = 1).collect { result ->
                 result.fold(
                     onSuccess = { articles ->
-                        // 如果选中了特定分类，过滤文章
+                        // Nếu đã chọn category cụ thể, lọc bài viết
                         val filteredArticles = if (_uiState.value.selectedCategoryId != null) {
                             articles.filter { it.categoryId == _uiState.value.selectedCategoryId }
                         } else {
@@ -103,7 +103,7 @@ class ArticlesViewModel @Inject constructor(
     }
 
     /**
-     * 获取分类列表（包括"全部"选项）
+     * Lấy danh sách category (bao gồm option "Tất cả")
      */
     fun getCategories(): List<CategoryItem> {
         val allCategory = CategoryItem(id = null, name = "Tất cả")
@@ -175,15 +175,15 @@ class ArticlesViewModel @Inject constructor(
 
 data class ArticlesUiState(
     val articles: List<Article> = emptyList(),
-    val selectedCategoryId: Int? = null, // null 表示"全部"
+    val selectedCategoryId: Int? = null, // null nghĩa là "Tất cả"
     val isLoading: Boolean = false,
     val error: String? = null
 )
 
 /**
- * 分类项（用于UI显示）
+ * Category item (để hiển thị trên UI)
  */
 data class CategoryItem(
-    val id: Int?, // null 表示"全部"
+    val id: Int?, // null nghĩa là "Tất cả"
     val name: String
 )

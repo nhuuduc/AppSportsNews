@@ -10,14 +10,14 @@ import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.nhd.news.ui.components.ArticleCard
 import com.nhd.news.ui.theme.TinTứcThểThaoTheme
 import kotlinx.coroutines.launch
@@ -82,8 +82,7 @@ fun ArticlesScreen(
         // Content with SwipeRefresh
         SwipeRefresh(
             state = swipeRefreshState,
-            onRefresh = { viewModel.refresh() },
-            modifier = Modifier.fillMaxSize()
+            onRefresh = { viewModel.refresh() }
         ) {
             when {
                 uiState.isLoading && uiState.articles.isEmpty() -> {

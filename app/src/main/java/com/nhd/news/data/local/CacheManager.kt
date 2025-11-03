@@ -8,19 +8,19 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * 缓存管理器 - 负责清理过期缓存
+ * Cache Manager - Quản lý và xóa cache đã hết hạn
  */
 @Singleton
 class CacheManager @Inject constructor(
     private val articleDao: ArticleDao
 ) {
     companion object {
-        // 缓存有效期：7天
+        // Thời gian cache hợp lệ: 7 ngày
         private val CACHE_VALIDITY_DAYS = 7L
     }
     
     /**
-     * 清理超过7天的缓存
+     * Xóa cache đã quá 7 ngày
      */
     fun clearOldCache() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -35,7 +35,7 @@ class CacheManager @Inject constructor(
     }
     
     /**
-     * 清除所有缓存
+     * Xóa toàn bộ cache
      */
     fun clearAllCache() {
         CoroutineScope(Dispatchers.IO).launch {
@@ -48,7 +48,7 @@ class CacheManager @Inject constructor(
     }
     
     /**
-     * 获取缓存的文章数量
+     * Lấy số lượng bài viết đã cache
      */
     suspend fun getCachedArticlesCount(): Int {
         return try {

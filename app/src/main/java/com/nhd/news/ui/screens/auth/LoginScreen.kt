@@ -76,17 +76,17 @@ fun LoginScreen(
             
             Spacer(modifier = Modifier.height(32.dp))
             
-            // Email field
+            // Email/Username field
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email") },
-                placeholder = { Text("example@email.com") },
+                label = { Text("Email hoặc Tên đăng nhập") },
+                placeholder = { Text("username hoặc email@example.com") },
                 leadingIcon = {
-                    Icon(Icons.Default.Email, contentDescription = "Email")
+                    Icon(Icons.Default.Email, contentDescription = "Email hoặc Username")
                 },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Email,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(

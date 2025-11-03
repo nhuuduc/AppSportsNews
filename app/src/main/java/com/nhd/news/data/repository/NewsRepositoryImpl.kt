@@ -30,7 +30,7 @@ class NewsRepositoryImpl @Inject constructor(
 
     override fun getArticles(category: String, page: Int): Flow<Result<List<Article>>> = flow {
         try {
-            // 先尝试从网络获取
+            // Thử lấy từ API trước
             val response = apiService.getArticles(page = page, limit = ApiConfig.DEFAULT_PAGE_SIZE)
             if (response.isSuccessful) {
                 val articleResponse = response.body()
@@ -45,7 +45,7 @@ class NewsRepositoryImpl @Inject constructor(
                         }
                         .sortedByDescending { it.publishedAt ?: it.createdAt ?: "" }
                     
-                    // 保存到缓存
+                    // Lưu vào cache
                     if (page == 1) {
                         articleDao.insertArticles(articles.map { it.toEntity() })
                     }
@@ -58,7 +58,7 @@ class NewsRepositoryImpl @Inject constructor(
                 emit(Result.failure(Exception("API Error: ${response.code()}")))
             }
         } catch (e: Exception) {
-            // 网络失败时从缓存读取
+            // Khi API lỗi, đọc từ cache
             try {
                 articleDao.getAllArticles().collect { cachedArticles ->
                     if (cachedArticles.isNotEmpty()) {
@@ -75,7 +75,7 @@ class NewsRepositoryImpl @Inject constructor(
 
     override fun getArticleById(id: Int): Flow<Result<Article>> = flow {
         try {
-            // 先尝试从网络获取
+            // Thử lấy từ API trước
             val response = apiService.getArticleById(id)
             if (response.isSuccessful) {
                 val article = response.body()
@@ -86,7 +86,7 @@ class NewsRepositoryImpl @Inject constructor(
                         thumbnailUrl = imageUrlHelper.getAbsoluteImageUrl(article.thumbnailUrl)
                     )
                     
-                    // 保存到缓存
+                    // Lưu vào cache
                     articleDao.insertArticle(updatedArticle.toEntity())
                     
                     emit(Result.success(updatedArticle))
@@ -97,7 +97,7 @@ class NewsRepositoryImpl @Inject constructor(
                 emit(Result.failure(Exception("API Error: ${response.code()}")))
             }
         } catch (e: Exception) {
-            // 网络失败时从缓存读取
+            // Khi API lỗi, đọc từ cache
             android.util.Log.w("NewsRepositoryImpl", "Failed to load article $id from network, trying cache: ${e.message}")
             try {
                 val cachedArticle = articleDao.getArticleById(id)
@@ -114,7 +114,7 @@ class NewsRepositoryImpl @Inject constructor(
 
     override fun searchArticles(query: String, page: Int): Flow<Result<List<Article>>> = flow {
         try {
-            // 先尝试从网络搜索
+            // Thử tìm kiếm từ API trước
             val response = apiService.searchContent(keyword = query, type = "articles", limit = 20)
             if (response.isSuccessful) {
                 val searchResponse = response.body()
@@ -136,7 +136,7 @@ class NewsRepositoryImpl @Inject constructor(
                 emit(Result.failure(Exception("Search API Error: ${response.code()}")))
             }
         } catch (e: Exception) {
-            // 网络失败时从缓存搜索
+            // Khi API lỗi, tìm kiếm từ cache
             try {
                 articleDao.searchArticles(query).collect { cachedArticles ->
                     if (cachedArticles.isNotEmpty()) {

@@ -2,11 +2,12 @@
 // Database configuration with optimizations
 class Database {
     private $host = "localhost";
-    private $db_name = "sports_news";
-    private $username = "root";
-    private $password = "";
+    private $db_name = "sportsnews";
+    private $username = "sportsnews";
+    private $password = "NaJzYEKbr2y8WEbD";
     private static $instance = null;
     public $conn;
+
 
     // Singleton pattern for connection reuse
     public static function getInstance() {

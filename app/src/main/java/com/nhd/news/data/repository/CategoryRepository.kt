@@ -13,7 +13,7 @@ class CategoryRepository @Inject constructor(
 ) {
     
     /**
-     * 获取所有分类
+     * Lấy tất cả category
      */
     fun getAllCategories(): Flow<Result<List<Category>>> = flow {
         try {
@@ -24,10 +24,10 @@ class CategoryRepository @Inject constructor(
                     val categories = categoriesResponse.categories
                     emit(Result.success(categories))
                 } else {
-                    emit(Result.failure(Exception("获取分类失败")))
+                    emit(Result.failure(Exception("Không thể lấy danh sách category")))
                 }
             } else {
-                emit(Result.failure(Exception("API错误: ${response.code()}")))
+                emit(Result.failure(Exception("Lỗi API: ${response.code()}")))
             }
         } catch (e: Exception) {
             emit(Result.failure(e))
@@ -35,7 +35,7 @@ class CategoryRepository @Inject constructor(
     }
     
     /**
-     * 根据ID获取分类
+     * Lấy category theo ID
      */
     fun getCategoryById(categoryId: Int): Flow<Result<Category>> = flow {
         try {
@@ -47,13 +47,13 @@ class CategoryRepository @Inject constructor(
                     if (category != null) {
                         emit(Result.success(category))
                     } else {
-                        emit(Result.failure(Exception("未找到分类")))
+                        emit(Result.failure(Exception("Không tìm thấy category")))
                     }
                 } else {
-                    emit(Result.failure(Exception(categoryResponse?.message ?: "获取分类失败")))
+                    emit(Result.failure(Exception(categoryResponse?.message ?: "Không thể lấy category")))
                 }
             } else {
-                emit(Result.failure(Exception("API错误: ${response.code()}")))
+                emit(Result.failure(Exception("Lỗi API: ${response.code()}")))
             }
         } catch (e: Exception) {
             emit(Result.failure(e))

@@ -4,7 +4,7 @@ Parsers Package
 """
 
 from parsers.vnexpress_parser import VnExpressParser
-from parsers.bongdaplus_parser import BongDaPlusParser
+from parsers.match_parser import VnExpressMatchParser
 
-__all__ = ['VnExpressParser', 'BongDaPlusParser']
+__all__ = ['VnExpressParser', 'VnExpressMatchParser']
 

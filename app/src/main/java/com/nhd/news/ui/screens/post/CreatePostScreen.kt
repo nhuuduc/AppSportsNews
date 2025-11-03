@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -107,7 +109,7 @@ fun CreatePostScreen(
                 title = { Text("Tạo bài viết") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, "Quay lại")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Quay lại")
                     }
                 }
             )
@@ -194,9 +196,7 @@ fun CreatePostScreen(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory)
                     },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(),
+                    modifier = Modifier.fillMaxWidth(),
                     enabled = !uiState.isLoading
                 )
                 
@@ -301,7 +301,7 @@ fun CreatePostScreen(
                             color = MaterialTheme.colorScheme.onPrimary
                         )
                     } else {
-                        Icon(Icons.Default.Send, "Đăng bài")
+                        Icon(Icons.AutoMirrored.Filled.Send, "Đăng bài")
                         Spacer(Modifier.width(8.dp))
                         Text("Đăng bài", style = MaterialTheme.typography.titleSmall)
                     }

@@ -7,8 +7,8 @@ import logging
 from logging.handlers import RotatingFileHandler
 from colorama import init, Fore, Style
 from database import DatabaseHandler
-from parsers import VnExpressParser, BongDaPlusParser
-from config import NEWS_SOURCES, LOG_FILE
+from parsers import VnExpressParser, VnExpressMatchParser
+from config import NEWS_SOURCES, MATCH_SOURCES, LOG_FILE
 import time
 from datetime import datetime
 
@@ -55,13 +55,19 @@ class NewsCrawler:
         self.db = DatabaseHandler()
         self.parsers = {
             'VnExpressParser': VnExpressParser(),
-            'BongDaPlusParser': BongDaPlusParser(),
+        }
+        self.match_parsers = {
+            'VnExpressMatchParser': VnExpressMatchParser(),
         }
         self.stats = {
             'total_crawled': 0,
             'total_saved': 0,
             'total_skipped': 0,
-            'total_errors': 0
+            'total_errors': 0,
+            'matches_crawled': 0,
+            'matches_saved': 0,
+            'matches_skipped': 0,
+            'matches_errors': 0
         }
     
     def print_header(self):
@@ -81,6 +87,11 @@ class NewsCrawler:
         print(f"{Fore.GREEN}  ✓ Đã lưu thành công: {self.stats['total_saved']}")
         print(f"{Fore.YELLOW}  ⚠ Đã bỏ qua (trùng): {self.stats['total_skipped']}")
         print(f"{Fore.RED}  ✗ Lỗi: {self.stats['total_errors']}")
+        print(f"{Fore.CYAN}  ─────────────────────────────────────")
+        print(f"{Fore.GREEN}  ✓ Tổng số trận đấu crawl: {self.stats['matches_crawled']}")
+        print(f"{Fore.GREEN}  ✓ Đã lưu thành công: {self.stats['matches_saved']}")
+        print(f"{Fore.YELLOW}  ⚠ Đã bỏ qua (trùng): {self.stats['matches_skipped']}")
+        print(f"{Fore.RED}  ✗ Lỗi: {self.stats['matches_errors']}")
         print(f"{Fore.YELLOW}{'─'*70}{Style.RESET_ALL}\n")
     
     def crawl_source(self, source_name, source_config, limit=10):
@@ -148,16 +159,109 @@ class NewsCrawler:
             logger.error(f"✗ Lỗi crawl nguồn {source_name}: {e}")
             self.stats['total_errors'] += 1
     
-    def run(self, limit_per_source=10):
+    def crawl_matches(self, source_name, source_config, limit=50):
+        """Crawl các trận đấu sắp diễn ra từ một nguồn"""
+        if not source_config.get('enabled', False):
+            logger.info(f"⊗ Nguồn matches {source_name} đã bị tắt")
+            return
+        
+        print(f"\n{Fore.CYAN}▶ Bắt đầu crawl lịch thi đấu: {source_config['name']}")
+        print(f"{Fore.CYAN}  URL: {source_config['base_url']}{Style.RESET_ALL}")
+        
+        parser_name = source_config.get('parser')
+        if parser_name not in self.match_parsers:
+            logger.error(f"✗ Không tìm thấy match parser: {parser_name}")
+            return
+        
+        parser = self.match_parsers[parser_name]
+        
+        try:
+            # Lấy danh sách trận đấu
+            matches = parser.get_upcoming_matches(limit=limit)
+            
+            if not matches:
+                logger.warning(f"⚠ Không tìm thấy trận đấu nào từ {source_name}")
+                return
+            
+            print(f"{Fore.GREEN}  ✓ Tìm thấy {len(matches)} trận đấu\n")
+            
+            # Lưu từng trận đấu
+            for idx, match_info in enumerate(matches, 1):
+                home_team_name = match_info.get('home_team_name', 'Unknown')
+                away_team_name = match_info.get('away_team_name', 'Unknown')
+                match_date = match_info.get('match_date', datetime.now())
+                
+                print(f"{Fore.CYAN}  [{idx}/{len(matches)}] {home_team_name} vs {away_team_name}")
+                print(f"      Ngày: {match_date.strftime('%d/%m/%Y %H:%M') if isinstance(match_date, datetime) else match_date}")
+                
+                self.stats['matches_crawled'] += 1
+                
+                # Lấy hoặc tạo teams
+                home_team_id = self.db.get_or_create_team(
+                    home_team_name,
+                    team_code=match_info.get('home_team_code'),
+                    logo_url=match_info.get('home_team_logo')
+                )
+                away_team_id = self.db.get_or_create_team(
+                    away_team_name,
+                    team_code=match_info.get('away_team_code'),
+                    logo_url=match_info.get('away_team_logo')
+                )
+                
+                if not home_team_id or not away_team_id:
+                    logger.error(f"  {Fore.RED}✗ Không thể tạo teams")
+                    self.stats['matches_errors'] += 1
+                    continue
+                
+                # Chuẩn bị dữ liệu match
+                match_data = {
+                    'home_team_id': home_team_id,
+                    'away_team_id': away_team_id,
+                    'home_team_name': home_team_name,
+                    'away_team_name': away_team_name,
+                    'match_date': match_date if isinstance(match_date, datetime) else datetime.now(),
+                    'tournament_name': match_info.get('tournament_name', ''),
+                    'category_id': match_info.get('category_id', 1),
+                    'venue': match_info.get('venue', ''),
+                    'status': match_info.get('status', 'scheduled')
+                }
+                
+                # Lưu vào database
+                match_id = self.db.insert_match(match_data)
+                
+                if match_id:
+                    print(f"  {Fore.GREEN}✓ Đã lưu (ID: {match_id})")
+                    self.stats['matches_saved'] += 1
+                else:
+                    print(f"  {Fore.YELLOW}⚠ Bỏ qua (đã tồn tại)")
+                    self.stats['matches_skipped'] += 1
+                
+                # Delay giữa các trận đấu
+                time.sleep(1)
+            
+        except Exception as e:
+            logger.error(f"✗ Lỗi crawl matches từ {source_name}: {e}", exc_info=True)
+            self.stats['matches_errors'] += 1
+    
+    def run(self, limit_per_source=10, crawl_matches=True):
         """Chạy crawler cho tất cả các nguồn"""
         self.print_header()
         
         start_time = time.time()
         logger.info(f"🚀 Bắt đầu crawl lúc: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         
-        # Crawl từng nguồn
+        # Crawl từng nguồn tin tức
         for source_name, source_config in NEWS_SOURCES.items():
             self.crawl_source(source_name, source_config, limit=limit_per_source)
+        
+        # Crawl các trận đấu sắp diễn ra
+        if crawl_matches:
+            print(f"\n{Fore.MAGENTA}{'='*70}")
+            print(f"{Fore.MAGENTA}▶ BẮT ĐẦU CRAWL LỊCH THI ĐẤU")
+            print(f"{Fore.MAGENTA}{'='*70}{Style.RESET_ALL}\n")
+            
+            for source_name, source_config in MATCH_SOURCES.items():
+                self.crawl_matches(source_name, source_config, limit=50)
         
         # Thống kê
         elapsed_time = time.time() - start_time
@@ -172,9 +276,17 @@ class NewsCrawler:
             print(f"{Fore.GREEN}  • Tổng số categories: {db_stats['total_categories']}")
             print(f"{Fore.GREEN}  • Tổng số tags: {db_stats['total_tags']}")
             
+            if db_stats.get('total_matches'):
+                print(f"{Fore.GREEN}  • Tổng số trận đấu: {db_stats['total_matches']}")
+            
             if db_stats.get('by_status'):
-                print(f"{Fore.CYAN}  Theo trạng thái:")
+                print(f"{Fore.CYAN}  Bài viết theo trạng thái:")
                 for status_info in db_stats['by_status']:
+                    print(f"{Fore.GREEN}    - {status_info['status']}: {status_info['count']}")
+            
+            if db_stats.get('matches_by_status'):
+                print(f"{Fore.CYAN}  Trận đấu theo trạng thái:")
+                for status_info in db_stats['matches_by_status']:
                     print(f"{Fore.GREEN}    - {status_info['status']}: {status_info['count']}")
             
             print(f"{Fore.CYAN}{'─'*70}{Style.RESET_ALL}\n")
@@ -192,8 +304,8 @@ def main():
     try:
         crawler = NewsCrawler()
         
-        # Crawl 10 bài viết từ mỗi nguồn
-        crawler.run(limit_per_source=10)
+        # Crawl 10 bài viết từ mỗi nguồn và các trận đấu sắp diễn ra
+        crawler.run(limit_per_source=10, crawl_matches=True)
         
         crawler.close()
         

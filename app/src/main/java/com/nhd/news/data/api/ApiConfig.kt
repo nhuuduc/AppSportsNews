@@ -4,11 +4,9 @@ object ApiConfig {
     
     // const val BASE_URL = "http://10.0.2.2/api/"
     
-    const val BASE_URL = "http://172.16.36.127/api/"
+    // const val BASE_URL = "http://172.16.36.127/api/"
     
-    // const val BASE_URL = "http://dev.yourdomain.com/api/"
-    
-    // const val BASE_URL = "https://yourdomain.com/api/"
+    const val BASE_URL = "https://nhd6.site/api/"
     
     const val CONNECT_TIMEOUT = 30L
     

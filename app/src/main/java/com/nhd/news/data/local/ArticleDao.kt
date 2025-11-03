@@ -10,49 +10,49 @@ import kotlinx.coroutines.flow.Flow
 interface ArticleDao {
     
     /**
-     * 插入单个文章
+     * Thêm một bài viết
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertArticle(article: ArticleEntity)
     
     /**
-     * 插入多个文章
+     * Thêm nhiều bài viết
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertArticles(articles: List<ArticleEntity>)
     
     /**
-     * 根据ID获取文章
+     * Lấy bài viết theo ID
      */
     @Query("SELECT * FROM articles WHERE articleId = :articleId")
     suspend fun getArticleById(articleId: Int): ArticleEntity?
     
     /**
-     * 获取所有文章（按发布日期降序）
+     * Lấy tất cả bài viết (sắp xếp theo ngày đăng giảm dần)
      */
     @Query("SELECT * FROM articles ORDER BY publishedAt DESC, createdAt DESC")
     fun getAllArticles(): Flow<List<ArticleEntity>>
     
     /**
-     * 根据分类ID获取文章
+     * Lấy bài viết theo category ID
      */
     @Query("SELECT * FROM articles WHERE categoryId = :categoryId ORDER BY publishedAt DESC, createdAt DESC")
     fun getArticlesByCategory(categoryId: Int): Flow<List<ArticleEntity>>
     
     /**
-     * 获取特色文章
+     * Lấy bài viết nổi bật
      */
     @Query("SELECT * FROM articles WHERE isFeatured = 1 ORDER BY publishedAt DESC LIMIT :limit")
     fun getFeaturedArticles(limit: Int = 5): Flow<List<ArticleEntity>>
     
     /**
-     * 获取突发新闻
+     * Lấy tin tức khẩn cấp
      */
     @Query("SELECT * FROM articles WHERE isBreakingNews = 1 ORDER BY publishedAt DESC LIMIT :limit")
     fun getBreakingNews(limit: Int = 3): Flow<List<ArticleEntity>>
     
     /**
-     * 搜索文章
+     * Tìm kiếm bài viết
      */
     @Query("""
         SELECT * FROM articles 
@@ -64,31 +64,31 @@ interface ArticleDao {
     fun searchArticles(query: String): Flow<List<ArticleEntity>>
     
     /**
-     * 删除所有文章
+     * Xóa tất cả bài viết
      */
     @Query("DELETE FROM articles")
     suspend fun deleteAllArticles()
     
     /**
-     * 删除过期的缓存（超过7天）
+     * Xóa cache đã hết hạn (quá 7 ngày)
      */
     @Query("DELETE FROM articles WHERE cachedAt < :timestamp")
     suspend fun deleteOldCache(timestamp: Long)
     
     /**
-     * 更新文章的点赞状态
+     * Cập nhật trạng thái like của bài viết
      */
     @Query("UPDATE articles SET isLiked = :isLiked, likeCount = :likeCount WHERE articleId = :articleId")
     suspend fun updateLikeStatus(articleId: Int, isLiked: Boolean, likeCount: Int)
     
     /**
-     * 更新文章的浏览次数
+     * Cập nhật số lượt xem của bài viết
      */
     @Query("UPDATE articles SET viewCount = :viewCount WHERE articleId = :articleId")
     suspend fun updateViewCount(articleId: Int, viewCount: Int)
     
     /**
-     * 获取缓存的文章数量
+     * Lấy số lượng bài viết đã cache
      */
     @Query("SELECT COUNT(*) FROM articles")
     suspend fun getCachedArticlesCount(): Int

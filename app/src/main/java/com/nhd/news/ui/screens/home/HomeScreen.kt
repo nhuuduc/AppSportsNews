@@ -15,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -25,8 +27,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.nhd.news.ui.components.ArticleCard
 import com.nhd.news.ui.components.VideoCard
 import com.nhd.news.ui.theme.TinTứcThểThaoTheme
@@ -188,8 +188,7 @@ fun HomeScreen(
         // Content with SwipeRefresh
         SwipeRefresh(
             state = swipeRefreshState,
-            onRefresh = { homeViewModel.refresh() },
-            modifier = Modifier.fillMaxSize()
+            onRefresh = { homeViewModel.refresh() }
         ) {
             when {
                 uiState.isLoading && uiState.trendingArticles.isEmpty() -> {
