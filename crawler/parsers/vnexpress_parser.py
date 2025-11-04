@@ -6,6 +6,7 @@ VnExpress Parser - Parser cho VnExpress Thể Thao
 from parsers.base_parser import BaseParser
 import logging
 from datetime import datetime
+from urllib.parse import urljoin
 from config import DEFAULT_AUTHOR_ID
 
 logger = logging.getLogger(__name__)
@@ -94,6 +95,46 @@ class VnExpressParser(BaseParser):
             # Tạo slug trước (cần cho download ảnh)
             slug = self.generate_slug(title)
             
+            # Thu thập danh sách ảnh từ content trước khi xử lý
+            images_list = []
+            img_tags = content_tag.find_all('img')
+            for img in img_tags:
+                # Thử nhiều thuộc tính để lấy URL ảnh (ưu tiên data-src cho lazy load)
+                img_url = (img.get('data-src') or 
+                          img.get('data-original') or 
+                          img.get('src') or 
+                          img.get('data-lazy-src'))
+                
+                if img_url:
+                    # Chuyển thành URL tuyệt đối nếu cần
+                    if not img_url.startswith('http'):
+                        img_url = urljoin('https://vnexpress.net', img_url)
+                    
+                    # Loại bỏ các ký tự không hợp lệ và làm sạch URL
+                    # Giữ nguyên query parameters vì CDN có thể cần chúng
+                    img_url = img_url.strip()
+                    
+                    # Validate URL hợp lệ
+                    if not img_url.startswith('http'):
+                        logger.warning(f"  ⚠ Bỏ qua URL ảnh không hợp lệ: {img_url[:50]}...")
+                        continue
+                    
+                    # Lấy caption nếu có
+                    caption = ''
+                    # Tìm caption trong thẻ figure hoặc từ alt
+                    figure = img.find_parent('figure')
+                    if figure:
+                        caption_tag = figure.find('figcaption')
+                        if caption_tag:
+                            caption = self.clean_text(caption_tag.get_text())
+                    if not caption:
+                        caption = img.get('alt', '') or img.get('title', '')
+                    
+                    images_list.append({
+                        'url': img_url,
+                        'caption': caption[:500] if caption else ''  # Giới hạn độ dài caption
+                    })
+            
             # Xử lý ảnh trong content HTML
             # Download tất cả ảnh và thay thế URL trong HTML
             content_html = self.process_content_images(content_tag, slug)
@@ -106,7 +147,9 @@ class VnExpressParser(BaseParser):
             thumb_tag = soup.select_one('.fig-picture img')
             thumbnail_url = ''
             if thumb_tag:
-                thumbnail_url = thumb_tag.get('data-src') or thumb_tag.get('src') or ''
+                thumbnail_url = (thumb_tag.get('data-src') or 
+                               thumb_tag.get('data-original') or 
+                               thumb_tag.get('src') or '')
             
             # Download thumbnail
             if thumbnail_url:
@@ -148,7 +191,7 @@ class VnExpressParser(BaseParser):
                 'source_url': url,  # Tracking nguồn tin (để tránh duplicate)
                 'is_featured': 0,  # Crawler không tự đánh dấu featured
                 'is_breaking_news': 0,  # Crawler không tự đánh dấu breaking news
-                'images': []  # Danh sách ảnh trong bài (nếu cần)
+                'images': images_list  # Danh sách ảnh trong bài
             }
             
             logger.info(f"✓ Parse thành công: {title}")

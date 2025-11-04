@@ -7,7 +7,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from colorama import init, Fore, Style
 from database import DatabaseHandler
-from parsers import VnExpressMatchParser
+from parsers import VnExpressMatchParser, RobongMatchParser
 from config import MATCH_SOURCES, LOG_FILE
 import time
 import sys
@@ -63,6 +63,7 @@ class MatchCrawler:
         self.db = DatabaseHandler()
         self.match_parsers = {
             'VnExpressMatchParser': VnExpressMatchParser(),
+            'RobongMatchParser': RobongMatchParser(),
         }
         self.stats = {
             'matches_crawled': 0,

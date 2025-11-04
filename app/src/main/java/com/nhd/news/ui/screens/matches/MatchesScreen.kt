@@ -254,7 +254,7 @@ fun MatchCard(
 private fun formatMatchTime(match: Match): String {
     return try {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd/MM HH:mm", Locale.getDefault())
         val date = inputFormat.parse(match.matchDate)
         date?.let { outputFormat.format(it) } ?: match.matchDate
     } catch (e: Exception) {

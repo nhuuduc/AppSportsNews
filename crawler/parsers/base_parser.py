@@ -63,19 +63,33 @@ class BaseParser:
         return f"{base_slug}-{timestamp}"
     
     def download_image(self, image_url, article_slug):
-        """Trả về URL ảnh trực tiếp từ trang báo (không download)"""
+        """
+        Trả về URL ảnh trực tiếp từ trang báo (không download)
+        Xử lý URL VnExpress CDN và validate format
+        """
         try:
             # Tạo absolute URL nếu là relative path
             if not image_url.startswith('http'):
                 image_url = urljoin(self.base_url, image_url)
             
             # Validate URL
-            if image_url.startswith('http'):
-                logger.info(f"  ✓ Sử dụng URL ảnh gốc: {image_url[:60]}...")
-                return image_url
-            else:
+            if not image_url.startswith('http'):
                 logger.warning(f"  ⚠ URL ảnh không hợp lệ: {image_url}")
                 return None
+            
+            # Xử lý URL VnExpress CDN - đảm bảo URL đầy đủ
+            # VnExpress CDN URLs thường có format: https://i1-thethao.vnecdn.net/YYYY/MM/DD/filename-timestamp
+            # Giữ nguyên query parameters vì chúng có thể chứa thông tin resize/optimize
+            if 'vnecdn.net' in image_url:
+                # Giữ nguyên query parameters (không xóa)
+                # Nếu URL không có extension trong filename, log để debug
+                filename = image_url.split('?')[0].split('/')[-1]
+                if '.' not in filename:
+                    logger.debug(f"  ℹ URL CDN không có extension rõ ràng: {image_url[:60]}...")
+            
+            # Validate URL có vẻ hợp lệ
+            logger.info(f"  ✓ Sử dụng URL ảnh gốc: {image_url[:60]}...")
+            return image_url
                 
         except Exception as e:
             logger.error(f"✗ Lỗi xử lý URL ảnh {image_url}: {e}")

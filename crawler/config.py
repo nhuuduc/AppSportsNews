@@ -86,8 +86,14 @@ MATCH_SOURCES = {
     'vnexpress_matches': {
         'name': 'VnExpress Lịch Thi Đấu Ngoại Hạng Anh',
         'base_url': 'https://vnexpress.net/the-thao/ngoai-hang-anh/lich-thi-dau',
-        'enabled': True,
+        'enabled': False,
         'parser': 'VnExpressMatchParser'
+    },
+    'robong_api': {
+        'name': 'Robong API Lịch Thi Đấu',
+        'base_url': 'https://api.robong.net/match/list',
+        'enabled': True,
+        'parser': 'RobongMatchParser'
     }
 }
 
