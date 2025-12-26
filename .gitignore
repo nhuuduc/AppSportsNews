@@ -13,3 +13,14 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Python cache và backup
+__pycache__/
+*.py[cod]
+*$py.class
+*.backup
+*.md.backup
+
+# API keys (nếu có file config)
+.env
+config.ini
