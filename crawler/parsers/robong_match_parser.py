@@ -16,7 +16,7 @@ class RobongMatchParser(BaseParser):
     """Parser cho API Robong lịch thi đấu"""
     
     def __init__(self):
-        super().__init__('Robong Matches', 'https://api.robong.net/match/list')
+        super().__init__('Robong Matches', 'https://rbapi.online/v1/match/list')
     
     def get_upcoming_matches(self, limit=50, days_range=None):
         """
@@ -89,8 +89,8 @@ class RobongMatchParser(BaseParser):
         matches = []
         
         try:
-            # URL API với tham số
-            api_url = f"{self.base_url}?sport_type=football&date={date_str}"
+            # URL API mới với tham số: type=schedule&state= (để lấy lịch thi đấu)
+            api_url = f"{self.base_url}?sport_type=football&date={date_str}&type=schedule&state="
             logger.info(f"📡 Đang tải: {api_url}")
             
             # Sử dụng get_page từ BaseParser

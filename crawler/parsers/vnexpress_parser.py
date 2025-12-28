@@ -27,12 +27,57 @@ class VnExpressParser(BaseParser):
         soup = self.parse_soup(html)
         articles = []
         
-        # Tìm các bài viết
-        article_items = soup.select('.item-news')[:limit]
+        # Tìm các bài viết - thử nhiều selector để tương thích với cấu trúc mới
+        article_items = []
+        
+        # Thử các selector mới trước
+        selectors = [
+            '.item-news',
+            '.article-item',
+            '.story-item',
+            'article.item-news',
+            'article.article-item',
+            '.thumb-art',
+            '.list-news-subfolder .item-news',
+            '.container .item-news'
+        ]
+        
+        for selector in selectors:
+            article_items = soup.select(selector)
+            if article_items:
+                logger.info(f"✓ Tìm thấy {len(article_items)} bài viết với selector: {selector}")
+                break
+        
+        if not article_items:
+            logger.warning("⚠ Không tìm thấy bài viết với bất kỳ selector nào")
+            return []
+        
+        article_items = article_items[:limit]
         
         for item in article_items:
             try:
-                title_tag = item.select_one('.title-news a')
+                # Thử nhiều selector cho title
+                title_tag = None
+                title_selectors = [
+                    '.title-news a',
+                    'h3.title-news a',
+                    'h2.title-news a',
+                    '.title a',
+                    'a.title-news',
+                    'h3 a',
+                    'h2 a',
+                    'a[href*="/the-thao/"]'
+                ]
+                
+                for selector in title_selectors:
+                    title_tag = item.select_one(selector)
+                    if title_tag:
+                        break
+                
+                if not title_tag:
+                    # Thử tìm thẻ a trực tiếp
+                    title_tag = item.find('a', href=True)
+                
                 if not title_tag:
                     continue
                 
@@ -43,13 +88,28 @@ class VnExpressParser(BaseParser):
                 if not url.startswith('http'):
                     url = f"https://vnexpress.net{url}"
                 
-                # Lấy thumbnail nếu có
-                thumb_tag = item.select_one('img')
-                thumbnail = thumb_tag.get('data-src') or thumb_tag.get('src') if thumb_tag else ''
+                # Lấy thumbnail nếu có - thử nhiều selector
+                thumbnail = ''
+                thumb_selectors = ['img', '.thumb img', 'picture img', '.thumb-art img']
+                for selector in thumb_selectors:
+                    thumb_tag = item.select_one(selector)
+                    if thumb_tag:
+                        thumbnail = (thumb_tag.get('data-src') or 
+                                   thumb_tag.get('data-original') or 
+                                   thumb_tag.get('src') or 
+                                   thumb_tag.get('data-lazy-src') or '')
+                        if thumbnail:
+                            break
                 
-                # Lấy mô tả
-                desc_tag = item.select_one('.description')
-                description = self.clean_text(desc_tag.get_text()) if desc_tag else ''
+                # Lấy mô tả - thử nhiều selector
+                description = ''
+                desc_selectors = ['.description', '.sapo', '.lead', '.summary', 'p.description']
+                for selector in desc_selectors:
+                    desc_tag = item.select_one(selector)
+                    if desc_tag:
+                        description = self.clean_text(desc_tag.get_text())
+                        if description:
+                            break
                 
                 articles.append({
                     'title': title,
@@ -74,20 +134,65 @@ class VnExpressParser(BaseParser):
             
             soup = self.parse_soup(html)
             
-            # Lấy tiêu đề
-            title_tag = soup.select_one('h1.title-detail')
+            # Lấy tiêu đề - thử nhiều selector
+            title_tag = None
+            title_selectors = [
+                'h1.title-detail',
+                'h1.title-news',
+                'h1.article-title',
+                'h1',
+                '.title-detail',
+                '.article-title'
+            ]
+            
+            for selector in title_selectors:
+                title_tag = soup.select_one(selector)
+                if title_tag:
+                    break
+            
             if not title_tag:
                 logger.warning(f"⚠ Không tìm thấy tiêu đề: {url}")
                 return None
             
             title = self.clean_text(title_tag.get_text())
             
-            # Lấy mô tả
-            desc_tag = soup.select_one('.description')
+            # Lấy mô tả - thử nhiều selector
+            desc_tag = None
+            desc_selectors = [
+                '.description',
+                '.sapo',
+                '.lead',
+                '.article-summary',
+                'p.description',
+                '.article-lead'
+            ]
+            
+            for selector in desc_selectors:
+                desc_tag = soup.select_one(selector)
+                if desc_tag:
+                    break
+            
             summary = self.clean_text(desc_tag.get_text()) if desc_tag else ''
             
-            # Lấy nội dung
-            content_tag = soup.select_one('.fck_detail')
+            # Lấy nội dung - thử nhiều selector
+            content_tag = None
+            content_selectors = [
+                '.fck_detail',
+                '.Normal',
+                '.article-body',
+                '.article-content',
+                '.content-detail',
+                '.article-body-content',
+                '[class*="fck"]',
+                '[class*="Normal"]'
+            ]
+            
+            for selector in content_selectors:
+                content_tag = soup.select_one(selector)
+                if content_tag:
+                    logger.info(f"✓ Tìm thấy nội dung với selector: {selector}")
+                    break
+            
             if not content_tag:
                 logger.warning(f"⚠ Không tìm thấy nội dung: {url}")
                 return None
@@ -143,13 +248,29 @@ class VnExpressParser(BaseParser):
                 logger.warning(f"⚠ Nội dung rỗng: {url}")
                 return None
             
-            # Lấy thumbnail
-            thumb_tag = soup.select_one('.fig-picture img')
+            # Lấy thumbnail - thử nhiều selector
+            thumb_tag = None
+            thumb_selectors = [
+                '.fig-picture img',
+                '.fig-picture picture img',
+                '.article-thumb img',
+                '.article-image img',
+                'picture img',
+                '.container-figure img',
+                'figure img'
+            ]
+            
+            for selector in thumb_selectors:
+                thumb_tag = soup.select_one(selector)
+                if thumb_tag:
+                    break
+            
             thumbnail_url = ''
             if thumb_tag:
                 thumbnail_url = (thumb_tag.get('data-src') or 
                                thumb_tag.get('data-original') or 
-                               thumb_tag.get('src') or '')
+                               thumb_tag.get('src') or 
+                               thumb_tag.get('data-lazy-src') or '')
             
             # Download thumbnail
             if thumbnail_url:
@@ -166,15 +287,49 @@ class VnExpressParser(BaseParser):
             # Trích xuất tags
             tags = self.extract_tags(title, content_text)
             
-            # Lấy ngày đăng
-            time_tag = soup.select_one('.date')
+            # Lấy ngày đăng - thử nhiều selector
+            time_tag = None
+            time_selectors = [
+                '.date',
+                '.header-content .date',
+                '.article-date',
+                'time',
+                '[datetime]',
+                '.date-time',
+                '.article-time'
+            ]
+            
+            for selector in time_selectors:
+                time_tag = soup.select_one(selector)
+                if time_tag:
+                    break
+            
             published_at = datetime.now()
             if time_tag:
                 try:
-                    time_text = self.clean_text(time_tag.get_text())
-                    # Parse time từ format VnExpress
-                    # TODO: Implement proper date parsing
-                except:
+                    # Thử lấy từ attribute datetime trước
+                    datetime_attr = time_tag.get('datetime')
+                    if datetime_attr:
+                        # Parse ISO format: 2024-01-01T10:00:00+07:00 hoặc 2024-01-01T10:00:00
+                        try:
+                            # Thử parse ISO format đơn giản
+                            if 'T' in datetime_attr:
+                                date_part, time_part = datetime_attr.split('T')
+                                year, month, day = date_part.split('-')
+                                time_part = time_part.split('+')[0].split('-')[0]  # Bỏ timezone
+                                hour, minute, second = time_part.split(':')
+                                published_at = datetime(
+                                    int(year), int(month), int(day),
+                                    int(hour), int(minute), int(second.split('.')[0]) if '.' in second else int(second)
+                                )
+                        except:
+                            pass
+                    else:
+                        time_text = self.clean_text(time_tag.get_text())
+                        # Parse time từ format VnExpress
+                        # TODO: Implement proper date parsing
+                except Exception as e:
+                    logger.debug(f"Không thể parse ngày đăng: {e}")
                     pass
             
             article_data = {

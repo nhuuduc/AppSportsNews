@@ -99,13 +99,56 @@ class VnExpressMatchParser(BaseParser):
                 matches.extend(container_matches)
         
         # Parse từ các bài viết - THỬ TẤT CẢ các bài viết, không chỉ những bài có từ khóa
-        article_items = soup.select('.item-news, article, .news-item, .list_news li, .item_normal, .item-news-common')[:limit * 3]
-        logger.info(f"✓ Tìm thấy {len(article_items)} bài viết để parse")
+        # Thử nhiều selector để tương thích với cấu trúc mới
+        article_items = []
+        article_selectors = [
+            '.item-news',
+            'article.item-news',
+            '.article-item',
+            'article.article-item',
+            '.story-item',
+            '.news-item',
+            '.list_news li',
+            '.item_normal',
+            '.item-news-common',
+            'article',
+            '.thumb-art',
+            '.list-news-subfolder .item-news'
+        ]
+        
+        for selector in article_selectors:
+            items = soup.select(selector)
+            if items:
+                article_items = items[:limit * 3]
+                logger.info(f"✓ Tìm thấy {len(article_items)} bài viết với selector: {selector}")
+                break
+        
+        if not article_items:
+            logger.warning("⚠ Không tìm thấy bài viết với bất kỳ selector nào")
         
         articles_checked = 0
         for item in article_items:
             try:
-                title_tag = item.select_one('.title-news a, h3 a, .title a, a.title, a')
+                # Thử nhiều selector cho title
+                title_tag = None
+                title_selectors = [
+                    '.title-news a',
+                    'h3.title-news a',
+                    'h2.title-news a',
+                    '.title a',
+                    'a.title-news',
+                    'h3 a',
+                    'h2 a',
+                    'a.title',
+                    'a[href*="/the-thao/"]',
+                    'a'
+                ]
+                
+                for selector in title_selectors:
+                    title_tag = item.select_one(selector)
+                    if title_tag:
+                        break
+                
                 if not title_tag:
                     continue
                 

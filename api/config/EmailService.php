@@ -16,7 +16,7 @@ class EmailService {
     public function __construct() {
         // Email configuration
         $this->from_email = "MS_yJNemv@nhd6.site"; // Change this to your email
-        $this->from_name = "NHD News";
+        $this->from_name = "Sp News";
         
         // Get base URL safely
         try {

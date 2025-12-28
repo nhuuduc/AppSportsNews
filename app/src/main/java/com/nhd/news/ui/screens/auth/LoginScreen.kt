@@ -80,10 +80,10 @@ fun LoginScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email hoặc Tên đăng nhập") },
-                placeholder = { Text("username hoặc email@example.com") },
+                label = { Text("Email") },
+                placeholder = { Text("email@example.com") },
                 leadingIcon = {
-                    Icon(Icons.Default.Email, contentDescription = "Email hoặc Username")
+                    Icon(Icons.Default.Email, contentDescription = "Email")
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,

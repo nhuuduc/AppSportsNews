@@ -3,7 +3,7 @@ package com.nhd.news.data.api
 object ApiConfig {
 
     
-    const val BASE_URL = "https://nhd6.site/api"
+    const val BASE_URL = "https://nhd6.site/api/"
     
     const val CONNECT_TIMEOUT = 30L
     
