@@ -108,10 +108,10 @@ fun RegisterScreen(
             OutlinedTextField(
                 value = email,
                 onValueChange = { email = it },
-                label = { Text("Email *") },
-                placeholder = { Text("example@email.com") },
+                label = { Text("Email Hoặc Username *") },
+                placeholder = { Text("example@email.com hoặc username") },
                 leadingIcon = { 
-                    Icon(Icons.Default.Email, contentDescription = "Email") 
+                    Icon(Icons.Default.Email, contentDescription = "Email Hoặc Username") 
                 },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
